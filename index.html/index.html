@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIVE CRYPTO CHART</title>
+    <title>Token Price Tracker</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -28,6 +28,47 @@
         .chart-container {
             height: 500px;
             margin-bottom: 20px;
+        }
+
+        /* Trade controls */
+        .trade-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .trade-controls input[type="number"] {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 150px;
+        }
+
+        .trade-controls button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            opacity: 0.5; /* Grayed out by default */
+            pointer-events: none; /* Disable clicks by default */
+        }
+
+        .trade-controls button.active {
+            opacity: 1; /* Fully visible when active */
+            pointer-events: auto; /* Enable clicks when active */
+        }
+
+        .trade-controls .buy-btn {
+            background-color: #28a745; /* Green for Buy */
+            color: white;
+        }
+
+        .trade-controls .sell-btn {
+            background-color: #dc3545; /* Red for Sell */
+            color: white;
         }
 
         /* Dark mode styles */
@@ -65,7 +106,7 @@
 
         <!-- Ethereum Chart -->
         <div class="token-section">
-            <h2>1: Ethereum (ETH)</h2>
+            <h2>Token 1: Ethereum (ETH)</h2>
             <div class="chart-container">
                 <!-- TradingView Widget -->
                 <div class="tradingview-widget-container">
@@ -95,11 +136,17 @@
                     </script>
                 </div>
             </div>
+            <!-- Trade Controls for ETH -->
+            <div class="trade-controls">
+                <input type="number" id="eth-volume" placeholder="Trade Volume" min="0.001" step="0.001">
+                <button class="buy-btn" id="eth-buy-btn">Buy</button>
+                <button class="sell-btn" id="eth-sell-btn">Sell</button>
+            </div>
         </div>
 
         <!-- Bitcoin Chart -->
         <div class="token-section">
-            <h2>2: Bitcoin (BTC)</h2>
+            <h2>Token 2: Bitcoin (BTC)</h2>
             <div class="chart-container">
                 <!-- TradingView Widget -->
                 <div class="tradingview-widget-container">
@@ -129,11 +176,17 @@
                     </script>
                 </div>
             </div>
+            <!-- Trade Controls for BTC -->
+            <div class="trade-controls">
+                <input type="number" id="btc-volume" placeholder="Trade Volume" min="0.001" step="0.001">
+                <button class="buy-btn" id="btc-buy-btn">Buy</button>
+                <button class="sell-btn" id="btc-sell-btn">Sell</button>
+            </div>
         </div>
 
         <!-- XRP Chart -->
         <div class="token-section">
-            <h2>3: XRP</h2>
+            <h2>Token 3: XRP</h2>
             <div class="chart-container">
                 <!-- TradingView Widget -->
                 <div class="tradingview-widget-container">
@@ -163,6 +216,12 @@
                     </script>
                 </div>
             </div>
+            <!-- Trade Controls for XRP -->
+            <div class="trade-controls">
+                <input type="number" id="xrp-volume" placeholder="Trade Volume" min="0.001" step="0.001">
+                <button class="buy-btn" id="xrp-buy-btn">Buy</button>
+                <button class="sell-btn" id="xrp-sell-btn">Sell</button>
+            </div>
         </div>
     </div>
 
@@ -187,6 +246,37 @@
                 }
             });
         });
+
+        // Trade controls functionality
+        const setupTradeControls = (volumeInputId, buyButtonId, sellButtonId) => {
+            const volumeInput = document.getElementById(volumeInputId);
+            const buyButton = document.getElementById(buyButtonId);
+            const sellButton = document.getElementById(sellButtonId);
+
+            volumeInput.addEventListener('input', () => {
+                const volume = parseFloat(volumeInput.value);
+                if (volume >= 0.001) {
+                    buyButton.classList.add('active');
+                    sellButton.classList.add('active');
+                } else {
+                    buyButton.classList.remove('active');
+                    sellButton.classList.remove('active');
+                }
+            });
+
+            buyButton.addEventListener('click', () => {
+                alert('Buy order placed!'); // Placeholder for Buy action
+            });
+
+            sellButton.addEventListener('click', () => {
+                alert('Sell order placed!'); // Placeholder for Sell action
+            });
+        };
+
+        // Set up trade controls for ETH, BTC, and XRP
+        setupTradeControls('eth-volume', 'eth-buy-btn', 'eth-sell-btn');
+        setupTradeControls('btc-volume', 'btc-buy-btn', 'btc-sell-btn');
+        setupTradeControls('xrp-volume', 'xrp-buy-btn', 'xrp-sell-btn');
     </script>
 </body>
 </html>
