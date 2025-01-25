@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Token Price Tracker</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -19,44 +18,16 @@
             width: 90%;
             max-width: 1200px;
             margin: 0 auto;
+            padding-top: 60px; /* Add padding to prevent content from being hidden behind the fixed button */
         }
 
         .token-section {
             margin-bottom: 30px;
         }
 
-        .sentiment-btns {
-            margin-top: 20px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            margin: 0 10px;
-            font-size: 16px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .bull-btn {
-            background-color: #28a745;
-            color: white;
-        }
-
-        .bear-btn {
-            background-color: #dc3545;
-            color: white;
-        }
-
-        .token-info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-        }
-
-        .token-info div {
-            font-size: 18px;
+        .chart-container {
+            height: 500px;
+            margin-bottom: 20px;
         }
 
         /* Dark mode styles */
@@ -65,24 +36,11 @@
             color: #ffffff;
         }
 
-        .dark-mode .btn {
-            background-color: #333;
-            color: #fff;
-        }
-
-        .dark-mode .bull-btn {
-            background-color: #28a745;
-        }
-
-        .dark-mode .bear-btn {
-            background-color: #dc3545;
-        }
-
         /* Dark mode toggle button */
         .dark-mode-toggle {
-            position: fixed;
-            top: 20px;
-            right: 20px;
+            position: fixed; /* Fix the button to the top */
+            top: 20px; /* Distance from the top */
+            right: 20px; /* Distance from the right */
             padding: 10px 20px;
             font-size: 16px;
             border: none;
@@ -90,6 +48,7 @@
             background-color: #333;
             color: #fff;
             cursor: pointer;
+            z-index: 1000; /* Ensure the button stays on top of other elements */
         }
 
         .dark-mode-toggle:hover {
@@ -104,29 +63,106 @@
     <div class="container">
         <h1>Token Price Tracker</h1>
 
-        <!-- Section for Token Information -->
-        <div class="token-section" id="token1-section">
+        <!-- Ethereum Chart -->
+        <div class="token-section">
             <h2>Token 1: Ethereum (ETH)</h2>
-            <canvas id="ethChart"></canvas>
-            <div class="token-info">
-                <div>Price: $<span id="eth-price">Loading...</span></div>
-                <div>24h Volume: $<span id="eth-volume">Loading...</span></div>
+            <div class="chart-container">
+                <!-- TradingView Widget -->
+                <div class="tradingview-widget-container">
+                    <div id="eth-chart"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                    <script type="text/javascript">
+                        new TradingView.widget({
+                            "container_id": "eth-chart",
+                            "width": "100%",
+                            "height": "500",
+                            "symbol": "BINANCE:ETHUSDT",
+                            "interval": "1", // 1-minute interval
+                            "timezone": "Etc/UTC",
+                            "theme": "light",
+                            "style": "1",
+                            "locale": "en",
+                            "toolbar_bg": "#f1f3f6",
+                            "enable_publishing": false,
+                            "hide_side_toolbar": false,
+                            "allow_symbol_change": true,
+                            "details": true,
+                            "studies": ["MA@tv-basicstudies"],
+                            "show_popup_button": true,
+                            "popup_width": "1000",
+                            "popup_height": "650"
+                        });
+                    </script>
+                </div>
             </div>
         </div>
 
-        <div class="token-section" id="token2-section">
+        <!-- Bitcoin Chart -->
+        <div class="token-section">
             <h2>Token 2: Bitcoin (BTC)</h2>
-            <canvas id="btcChart"></canvas>
-            <div class="token-info">
-                <div>Price: $<span id="btc-price">Loading...</span></div>
-                <div>24h Volume: $<span id="btc-volume">Loading...</span></div>
+            <div class="chart-container">
+                <!-- TradingView Widget -->
+                <div class="tradingview-widget-container">
+                    <div id="btc-chart"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                    <script type="text/javascript">
+                        new TradingView.widget({
+                            "container_id": "btc-chart",
+                            "width": "100%",
+                            "height": "500",
+                            "symbol": "BINANCE:BTCUSDT",
+                            "interval": "1", // 1-minute interval
+                            "timezone": "Etc/UTC",
+                            "theme": "light",
+                            "style": "1",
+                            "locale": "en",
+                            "toolbar_bg": "#f1f3f6",
+                            "enable_publishing": false,
+                            "hide_side_toolbar": false,
+                            "allow_symbol_change": true,
+                            "details": true,
+                            "studies": ["MA@tv-basicstudies"],
+                            "show_popup_button": true,
+                            "popup_width": "1000",
+                            "popup_height": "650"
+                        });
+                    </script>
+                </div>
             </div>
         </div>
 
-        <!-- Sentiment Buttons -->
-        <div class="sentiment-btns">
-            <button class="btn bull-btn" id="bull-btn">Bull</button>
-            <button class="btn bear-btn" id="bear-btn">Bear</button>
+        <!-- XRP Chart -->
+        <div class="token-section">
+            <h2>Token 3: XRP</h2>
+            <div class="chart-container">
+                <!-- TradingView Widget -->
+                <div class="tradingview-widget-container">
+                    <div id="xrp-chart"></div>
+                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                    <script type="text/javascript">
+                        new TradingView.widget({
+                            "container_id": "xrp-chart",
+                            "width": "100%",
+                            "height": "500",
+                            "symbol": "BINANCE:XRPUSDT",
+                            "interval": "1", // 1-minute interval
+                            "timezone": "Etc/UTC",
+                            "theme": "light",
+                            "style": "1",
+                            "locale": "en",
+                            "toolbar_bg": "#f1f3f6",
+                            "enable_publishing": false,
+                            "hide_side_toolbar": false,
+                            "allow_symbol_change": true,
+                            "details": true,
+                            "studies": ["MA@tv-basicstudies"],
+                            "show_popup_button": true,
+                            "popup_width": "1000",
+                            "popup_height": "650"
+                        });
+                    </script>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -139,140 +175,18 @@
         darkModeToggle.addEventListener('click', () => {
             isDarkMode = !isDarkMode;
             body.classList.toggle('dark-mode', isDarkMode);
-            updateChartColors(isDarkMode);
-        });
 
-        // Function to update chart colors based on dark mode
-        function updateChartColors(isDarkMode) {
-            const chartOptions = {
-                responsive: true,
-                scales: {
-                    x: {
-                        type: 'linear',
-                        position: 'bottom',
-                        ticks: {
-                            autoSkip: true,
-                            maxTicksLimit: 10,
-                            color: isDarkMode ? '#ffffff' : '#333',
-                        },
-                        grid: {
-                            color: isDarkMode ? '#333' : '#eee',
-                        },
-                    },
-                    y: {
-                        beginAtZero: false,
-                        ticks: {
-                            color: isDarkMode ? '#ffffff' : '#333',
-                        },
-                        grid: {
-                            color: isDarkMode ? '#333' : '#eee',
-                        },
-                    },
-                },
-            };
-
-            ethChart.options = chartOptions;
-            btcChart.options = chartOptions;
-
-            ethChart.update();
-            btcChart.update();
-        }
-
-        // Chart.js setup for both tokens
-        const createChart = (ctx, label) => {
-            return new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: [],
-                    datasets: [{
-                        label: label,
-                        data: [],
-                        borderColor: 'rgb(75, 192, 192)',
-                        borderWidth: 1,
-                        fill: false,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    scales: {
-                        x: {
-                            type: 'linear',
-                            position: 'bottom',
-                            ticks: {
-                                autoSkip: true,
-                                maxTicksLimit: 10,
-                                color: '#333',
-                            },
-                            grid: {
-                                color: '#eee',
-                            },
-                        },
-                        y: {
-                            beginAtZero: false,
-                            ticks: {
-                                color: '#333',
-                            },
-                            grid: {
-                                color: '#eee',
-                            },
-                        },
-                    },
-                },
+            // Update TradingView widget themes
+            const widgets = document.querySelectorAll('.tradingview-widget-container iframe');
+            widgets.forEach(widget => {
+                const src = widget.src;
+                if (isDarkMode) {
+                    widget.src = src.replace('theme=light', 'theme=dark');
+                } else {
+                    widget.src = src.replace('theme=dark', 'theme=light');
+                }
             });
-        };
-
-        // Create the charts
-        const ethCtx = document.getElementById('ethChart').getContext('2d');
-        const btcCtx = document.getElementById('btcChart').getContext('2d');
-
-        const ethChart = createChart(ethCtx, 'Ethereum (ETH) Price');
-        const btcChart = createChart(btcCtx, 'Bitcoin (BTC) Price');
-
-        // Fetch and update token data
-        async function updateTokenData() {
-            try {
-                // Fetch historical data for ETH and BTC
-                const ethResponse = await fetch('https://api.coingecko.com/api/v3/coins/ethereum/market_chart?vs_currency=usd&days=1');
-                const btcResponse = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1');
-
-                const ethData = await ethResponse.json();
-                const btcData = await btcResponse.json();
-
-                console.log('ETH Data:', ethData); // Debug ETH data
-                console.log('BTC Data:', btcData); // Debug BTC data
-
-                // Process ETH data
-                const ethPrices = ethData.prices;
-                const ethLabels = ethPrices.map(price => new Date(price[0]).toLocaleTimeString());
-                const ethValues = ethPrices.map(price => price[1]);
-
-                ethChart.data.labels = ethLabels;
-                ethChart.data.datasets[0].data = ethValues;
-                ethChart.update();
-
-                // Process BTC data
-                const btcPrices = btcData.prices;
-                const btcLabels = btcPrices.map(price => new Date(price[0]).toLocaleTimeString());
-                const btcValues = btcPrices.map(price => price[1]);
-
-                btcChart.data.labels = btcLabels;
-                btcChart.data.datasets[0].data = btcValues;
-                btcChart.update();
-
-                // Update current price and volume
-                const ethLatestPrice = ethValues[ethValues.length - 1];
-                const btcLatestPrice = btcValues[btcValues.length - 1];
-
-                document.getElementById('eth-price').innerText = ethLatestPrice.toFixed(2);
-                document.getElementById('btc-price').innerText = btcLatestPrice.toFixed(2);
-            } catch (err) {
-                console.error('Error fetching token data:', err);
-            }
-        }
-
-        // Update token data every 5 minutes
-        setInterval(updateTokenData, 300000); // 300000 ms = 5 minutes
-        updateTokenData(); // Initial call to populate data immediately
+        });
     </script>
 </body>
 </html>
