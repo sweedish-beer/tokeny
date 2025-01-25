@@ -6,23 +6,30 @@
     <title>Token Price Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
+        /* Light mode styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
             background-color: #f4f7f6;
+            color: #333;
+            transition: background-color 0.3s, color 0.3s;
         }
+
         .container {
             width: 90%;
             max-width: 1200px;
             margin: 0 auto;
         }
+
         .token-section {
             margin-bottom: 30px;
         }
+
         .sentiment-btns {
             margin-top: 20px;
         }
+
         .btn {
             padding: 10px 20px;
             margin: 0 10px;
@@ -31,26 +38,70 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         .bull-btn {
             background-color: #28a745;
             color: white;
         }
+
         .bear-btn {
             background-color: #dc3545;
             color: white;
         }
+
         .token-info {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 15px;
         }
+
         .token-info div {
             font-size: 18px;
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        .dark-mode .btn {
+            background-color: #333;
+            color: #fff;
+        }
+
+        .dark-mode .bull-btn {
+            background-color: #28a745;
+        }
+
+        .dark-mode .bear-btn {
+            background-color: #dc3545;
+        }
+
+        /* Dark mode toggle button */
+        .dark-mode-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #333;
+            color: #fff;
+            cursor: pointer;
+        }
+
+        .dark-mode-toggle:hover {
+            background-color: #555;
         }
     </style>
 </head>
 <body>
+    <!-- Dark mode toggle button -->
+    <button class="dark-mode-toggle" id="dark-mode-toggle">Toggle Dark Mode</button>
+
     <div class="container">
         <h1>Token Price Tracker</h1>
 
@@ -81,15 +132,52 @@
     </div>
 
     <script>
-        // Token contract addresses (replace with actual addresses)
-        const tokenAddresses = {
-            eth: '0x5b3CdbF22757F6dBbF468b52F0B14b41f26706f4', // Ethereum address
-            btc: '0xC98F5244A3fA6ab57D51A51a74993a0E2cc6a5EE' // Bitcoin address (replace with actual ERC-20 token address)
-        };
+        // Dark mode toggle functionality
+        const darkModeToggle = document.getElementById('dark-mode-toggle');
+        const body = document.body;
+        let isDarkMode = false;
 
-        const apiUrl = (tokens) => {
-            return `https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${tokens.join(',')}&vs_currencies=usd&include_24hr_vol=true`;
-        };
+        darkModeToggle.addEventListener('click', () => {
+            isDarkMode = !isDarkMode;
+            body.classList.toggle('dark-mode', isDarkMode);
+            updateChartColors(isDarkMode);
+        });
+
+        // Function to update chart colors based on dark mode
+        function updateChartColors(isDarkMode) {
+            const chartOptions = {
+                responsive: true,
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        ticks: {
+                            autoSkip: true,
+                            maxTicksLimit: 10,
+                            color: isDarkMode ? '#ffffff' : '#333',
+                        },
+                        grid: {
+                            color: isDarkMode ? '#333' : '#eee',
+                        },
+                    },
+                    y: {
+                        beginAtZero: false,
+                        ticks: {
+                            color: isDarkMode ? '#ffffff' : '#333',
+                        },
+                        grid: {
+                            color: isDarkMode ? '#333' : '#eee',
+                        },
+                    },
+                },
+            };
+
+            ethChart.options = chartOptions;
+            btcChart.options = chartOptions;
+
+            ethChart.update();
+            btcChart.update();
+        }
 
         // Chart.js setup for both tokens
         const createChart = (ctx, label) => {
@@ -113,14 +201,24 @@
                             position: 'bottom',
                             ticks: {
                                 autoSkip: true,
-                                maxTicksLimit: 10
-                            }
+                                maxTicksLimit: 10,
+                                color: '#333',
+                            },
+                            grid: {
+                                color: '#eee',
+                            },
                         },
                         y: {
-                            beginAtZero: false
-                        }
-                    }
-                }
+                            beginAtZero: false,
+                            ticks: {
+                                color: '#333',
+                            },
+                            grid: {
+                                color: '#eee',
+                            },
+                        },
+                    },
+                },
             });
         };
 
@@ -133,11 +231,13 @@
 
         // Fetch and update token data
         function updateTokenData() {
-            fetch(apiUrl([tokenAddresses.eth, tokenAddresses.btc]))
+            fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin&vs_currencies=usd&include_24hr_vol=true')
                 .then(response => response.json())
                 .then(data => {
-                    const ethData = data[tokenAddresses.eth.toLowerCase()];
-                    const btcData = data[tokenAddresses.btc.toLowerCase()];
+                    console.log('API Response:', data);
+
+                    const ethData = data.ethereum;
+                    const btcData = data.bitcoin;
 
                     // Update ETH chart and price
                     const ethPrice = ethData?.usd || 0;
@@ -162,19 +262,9 @@
                 .catch(err => console.error('Error fetching token data:', err));
         }
 
-        // Sentiment button event listeners
-        document.getElementById('bull-btn').addEventListener('click', () => {
-            alert('You selected: Bull');
-        });
-
-        document.getElementById('bear-btn').addEventListener('click', () => {
-            alert('You selected: Bear');
-        });
-
         // Update token data every 30 seconds
         setInterval(updateTokenData, 30000);
         updateTokenData(); // Initial call to populate data immediately
     </script>
 </body>
 </html>
-
