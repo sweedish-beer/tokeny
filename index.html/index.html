@@ -6,7 +6,6 @@
     <title>Token Price Tracker</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        /* Light mode styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -230,40 +229,49 @@
         const btcChart = createChart(btcCtx, 'Bitcoin (BTC) Price');
 
         // Fetch and update token data
-        function updateTokenData() {
-            fetch('https://api.coingecko.com/api/v3/simple/price?ids=ethereum,bitcoin&vs_currencies=usd&include_24hr_vol=true')
-                .then(response => response.json())
-                .then(data => {
-                    console.log('API Response:', data);
+        async function updateTokenData() {
+            try {
+                // Fetch historical data for ETH and BTC
+                const ethResponse = await fetch('https://api.coingecko.com/api/v3/coins/ethereum/market_chart?vs_currency=usd&days=1');
+                const btcResponse = await fetch('https://api.coingecko.com/api/v3/coins/bitcoin/market_chart?vs_currency=usd&days=1');
 
-                    const ethData = data.ethereum;
-                    const btcData = data.bitcoin;
+                const ethData = await ethResponse.json();
+                const btcData = await btcResponse.json();
 
-                    // Update ETH chart and price
-                    const ethPrice = ethData?.usd || 0;
-                    const ethVolume = ethData?.usd_24h_vol || 0;
-                    const ethTime = new Date().toLocaleTimeString();
-                    ethChart.data.labels.push(ethTime);
-                    ethChart.data.datasets[0].data.push(ethPrice);
-                    ethChart.update();
-                    document.getElementById('eth-price').innerText = ethPrice.toFixed(2);
-                    document.getElementById('eth-volume').innerText = ethVolume.toFixed(2);
+                console.log('ETH Data:', ethData); // Debug ETH data
+                console.log('BTC Data:', btcData); // Debug BTC data
 
-                    // Update BTC chart and price
-                    const btcPrice = btcData?.usd || 0;
-                    const btcVolume = btcData?.usd_24h_vol || 0;
-                    const btcTime = new Date().toLocaleTimeString();
-                    btcChart.data.labels.push(btcTime);
-                    btcChart.data.datasets[0].data.push(btcPrice);
-                    btcChart.update();
-                    document.getElementById('btc-price').innerText = btcPrice.toFixed(2);
-                    document.getElementById('btc-volume').innerText = btcVolume.toFixed(2);
-                })
-                .catch(err => console.error('Error fetching token data:', err));
+                // Process ETH data
+                const ethPrices = ethData.prices;
+                const ethLabels = ethPrices.map(price => new Date(price[0]).toLocaleTimeString());
+                const ethValues = ethPrices.map(price => price[1]);
+
+                ethChart.data.labels = ethLabels;
+                ethChart.data.datasets[0].data = ethValues;
+                ethChart.update();
+
+                // Process BTC data
+                const btcPrices = btcData.prices;
+                const btcLabels = btcPrices.map(price => new Date(price[0]).toLocaleTimeString());
+                const btcValues = btcPrices.map(price => price[1]);
+
+                btcChart.data.labels = btcLabels;
+                btcChart.data.datasets[0].data = btcValues;
+                btcChart.update();
+
+                // Update current price and volume
+                const ethLatestPrice = ethValues[ethValues.length - 1];
+                const btcLatestPrice = btcValues[btcValues.length - 1];
+
+                document.getElementById('eth-price').innerText = ethLatestPrice.toFixed(2);
+                document.getElementById('btc-price').innerText = btcLatestPrice.toFixed(2);
+            } catch (err) {
+                console.error('Error fetching token data:', err);
+            }
         }
 
-        // Update token data every 30 seconds
-        setInterval(updateTokenData, 30000);
+        // Update token data every 5 minutes
+        setInterval(updateTokenData, 300000); // 300000 ms = 5 minutes
         updateTokenData(); // Initial call to populate data immediately
     </script>
 </body>
