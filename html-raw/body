@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Token Price Tracker</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f7f6;
+        }
+        .container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .token-section {
+            margin-bottom: 30px;
+        }
+        .sentiment-btns {
+            margin-top: 20px;
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 0 10px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .bull-btn {
+            background-color: #28a745;
+            color: white;
+        }
+        .bear-btn {
+            background-color: #dc3545;
+            color: white;
+        }
+        .token-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+        }
+        .token-info div {
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Token Price Tracker</h1>
+
+        <!-- Section for Token Information -->
+        <div class="token-section" id="token1-section">
+            <h2>Token 1: Ethereum (ETH)</h2>
+            <canvas id="ethChart"></canvas>
+            <div class="token-info">
+                <div>Price: $<span id="eth-price">Loading...</span></div>
+                <div>24h Volume: $<span id="eth-volume">Loading...</span></div>
+            </div>
+        </div>
+
+        <div class="token-section" id="token2-section">
+            <h2>Token 2: Bitcoin (BTC)</h2>
+            <canvas id="btcChart"></canvas>
+            <div class="token-info">
+                <div>Price: $<span id="btc-price">Loading...</span></div>
+                <div>24h Volume: $<span id="btc-volume">Loading...</span></div>
+            </div>
+        </div>
+
+        <!-- Sentiment Buttons -->
+        <div class="sentiment-btns">
+            <button class="btn bull-btn" id="bull-btn">Bull</button>
+            <button class="btn bear-btn" id="bear-btn">Bear</button>
+        </div>
+    </div>
+
+    <script>
+        // Token contract addresses (replace with actual addresses)
+        const tokenAddresses = {
+            eth: '0x5b3CdbF22757F6dBbF468b52F0B14b41f26706f4', // Ethereum address
+            btc: '0xC98F5244A3fA6ab57D51A51a74993a0E2cc6a5EE' // Bitcoin address (replace with actual ERC-20 token address)
+        };
+
+        const apiUrl = (tokens) => {
+            return `https://api.coingecko.com/api/v3/simple/token_price/ethereum?contract_addresses=${tokens.join(',')}&vs_currencies=usd&include_24hr_vol=true`;
+        };
+
+        // Chart.js setup for both tokens
+        const createChart = (ctx, label) => {
+            return new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: [],
+                    datasets: [{
+                        label: label,
+                        data: [],
+                        borderColor: 'rgb(75, 192, 192)',
+                        borderWidth: 1,
+                        fill: false,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            ticks: {
+                                autoSkip: true,
+                                maxTicksLimit: 10
+                            }
+                        },
+                        y: {
+                            beginAtZero: false
+                        }
+                    }
+                }
+            });
+        };
+
+        // Create the charts
+        const ethCtx = document.getElementById('ethChart').getContext('2d');
+        const btcCtx = document.getElementById('btcChart').getContext('2d');
+
+        const ethChart = createChart(ethCtx, 'Ethereum (ETH) Price');
+        const btcChart = createChart(btcCtx, 'Bitcoin (BTC) Price');
+
+        // Fetch and update token data
+        function updateTokenData() {
+            fetch(apiUrl([tokenAddresses.eth, tokenAddresses.btc]))
+                .then(response => response.json())
+                .then(data => {
+                    const ethData = data[tokenAddresses.eth.toLowerCase()];
+                    const btcData = data[tokenAddresses.btc.toLowerCase()];
+
+                    // Update ETH chart and price
+                    const ethPrice = ethData?.usd || 0;
+                    const ethVolume = ethData?.usd_24h_vol || 0;
+                    const ethTime = new Date().toLocaleTimeString();
+                    ethChart.data.labels.push(ethTime);
+                    ethChart.data.datasets[0].data.push(ethPrice);
+                    ethChart.update();
+                    document.getElementById('eth-price').innerText = ethPrice.toFixed(2);
+                    document.getElementById('eth-volume').innerText = ethVolume.toFixed(2);
+
+                    // Update BTC chart and price
+                    const btcPrice = btcData?.usd || 0;
+                    const btcVolume = btcData?.usd_24h_vol || 0;
+                    const btcTime = new Date().toLocaleTimeString();
+                    btcChart.data.labels.push(btcTime);
+                    btcChart.data.datasets[0].data.push(btcPrice);
+                    btcChart.update();
+                    document.getElementById('btc-price').innerText = btcPrice.toFixed(2);
+                    document.getElementById('btc-volume').innerText = btcVolume.toFixed(2);
+                })
+                .catch(err => console.error('Error fetching token data:', err));
+        }
+
+        // Sentiment button event listeners
+        document.getElementById('bull-btn').addEventListener('click', () => {
+            alert('You selected: Bull');
+        });
+
+        document.getElementById('bear-btn').addEventListener('click', () => {
+            alert('You selected: Bear');
+        });
+
+        // Update token data every 30 seconds
+        setInterval(updateTokenData, 30000);
+        updateTokenData(); // Initial call to populate data immediately
+    </script>
+</body>
+</html>
+
