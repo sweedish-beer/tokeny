@@ -5,10 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Token Price Tracker</title>
     <style>
+        /* General styles */
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 20px;
+            padding: 0;
             background-color: #f4f7f6;
             color: #333;
             transition: background-color 0.3s, color 0.3s;
@@ -19,6 +20,85 @@
             max-width: 1200px;
             margin: 0 auto;
             padding-top: 60px; /* Add padding to prevent content from being hidden behind the fixed button */
+        }
+
+        /* Home page styles */
+        .home-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 48px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .auth-buttons button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #333;
+            color: #fff;
+        }
+
+        .auth-buttons button:hover {
+            background-color: #555;
+        }
+
+        .auth-form {
+            display: none; /* Hidden by default */
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .auth-form input {
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 250px;
+        }
+
+        .auth-form button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #28a745;
+            color: #fff;
+        }
+
+        .auth-form button:hover {
+            background-color: #218838;
+        }
+
+        .footer-text {
+            font-size: 12px;
+            color: #888;
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Charts page styles */
+        .charts-page {
+            display: none; /* Hidden by default */
         }
 
         .token-section {
@@ -98,134 +178,213 @@
     </style>
 </head>
 <body>
-    <!-- Dark mode toggle button -->
-    <button class="dark-mode-toggle" id="dark-mode-toggle">Toggle Dark Mode</button>
-
-    <div class="container">
-        <h1>Token Price Tracker</h1>
-
-        <!-- Ethereum Chart -->
-        <div class="token-section">
-            <h2>Token 1: Ethereum (ETH)</h2>
-            <div class="chart-container">
-                <!-- TradingView Widget -->
-                <div class="tradingview-widget-container">
-                    <div id="eth-chart"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                    <script type="text/javascript">
-                        new TradingView.widget({
-                            "container_id": "eth-chart",
-                            "width": "100%",
-                            "height": "500",
-                            "symbol": "BINANCE:ETHUSDT",
-                            "interval": "1", // 1-minute interval
-                            "timezone": "Etc/UTC",
-                            "theme": "light",
-                            "style": "1",
-                            "locale": "en",
-                            "toolbar_bg": "#f1f3f6",
-                            "enable_publishing": false,
-                            "hide_side_toolbar": false,
-                            "allow_symbol_change": true,
-                            "details": true,
-                            "studies": ["MA@tv-basicstudies"],
-                            "show_popup_button": true,
-                            "popup_width": "1000",
-                            "popup_height": "650"
-                        });
-                    </script>
-                </div>
-            </div>
-            <!-- Trade Controls for ETH -->
-            <div class="trade-controls">
-                <input type="number" id="eth-volume" placeholder="Trade Volume" min="0.001" step="0.001">
-                <button class="buy-btn" id="eth-buy-btn">Buy</button>
-                <button class="sell-btn" id="eth-sell-btn">Sell</button>
-            </div>
+    <!-- Home Page -->
+    <div class="home-page">
+        <div class="logo">MyTokenTracker</div>
+        <div class="auth-buttons">
+            <button id="signup-btn">Sign Up</button>
+            <button id="login-btn">Log In</button>
         </div>
-
-        <!-- Bitcoin Chart -->
-        <div class="token-section">
-            <h2>Token 2: Bitcoin (BTC)</h2>
-            <div class="chart-container">
-                <!-- TradingView Widget -->
-                <div class="tradingview-widget-container">
-                    <div id="btc-chart"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                    <script type="text/javascript">
-                        new TradingView.widget({
-                            "container_id": "btc-chart",
-                            "width": "100%",
-                            "height": "500",
-                            "symbol": "BINANCE:BTCUSDT",
-                            "interval": "1", // 1-minute interval
-                            "timezone": "Etc/UTC",
-                            "theme": "light",
-                            "style": "1",
-                            "locale": "en",
-                            "toolbar_bg": "#f1f3f6",
-                            "enable_publishing": false,
-                            "hide_side_toolbar": false,
-                            "allow_symbol_change": true,
-                            "details": true,
-                            "studies": ["MA@tv-basicstudies"],
-                            "show_popup_button": true,
-                            "popup_width": "1000",
-                            "popup_height": "650"
-                        });
-                    </script>
-                </div>
-            </div>
-            <!-- Trade Controls for BTC -->
-            <div class="trade-controls">
-                <input type="number" id="btc-volume" placeholder="Trade Volume" min="0.001" step="0.001">
-                <button class="buy-btn" id="btc-buy-btn">Buy</button>
-                <button class="sell-btn" id="btc-sell-btn">Sell</button>
-            </div>
+        <!-- Sign Up Form -->
+        <div class="auth-form" id="signup-form">
+            <input type="email" id="signup-email" placeholder="Enter your email" required>
+            <button id="signup-submit">Sign Up</button>
         </div>
+        <!-- Log In Form -->
+        <div class="auth-form" id="login-form">
+            <input type="email" id="login-email" placeholder="Enter your email" required>
+            <button id="login-submit">Log In</button>
+        </div>
+        <div class="footer-text">Lorem ipsum dallor sik hamet</div>
+    </div>
 
-        <!-- XRP Chart -->
-        <div class="token-section">
-            <h2>Token 3: XRP</h2>
-            <div class="chart-container">
-                <!-- TradingView Widget -->
-                <div class="tradingview-widget-container">
-                    <div id="xrp-chart"></div>
-                    <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
-                    <script type="text/javascript">
-                        new TradingView.widget({
-                            "container_id": "xrp-chart",
-                            "width": "100%",
-                            "height": "500",
-                            "symbol": "BINANCE:XRPUSDT",
-                            "interval": "1", // 1-minute interval
-                            "timezone": "Etc/UTC",
-                            "theme": "light",
-                            "style": "1",
-                            "locale": "en",
-                            "toolbar_bg": "#f1f3f6",
-                            "enable_publishing": false,
-                            "hide_side_toolbar": false,
-                            "allow_symbol_change": true,
-                            "details": true,
-                            "studies": ["MA@tv-basicstudies"],
-                            "show_popup_button": true,
-                            "popup_width": "1000",
-                            "popup_height": "650"
-                        });
-                    </script>
+    <!-- Charts Page -->
+    <div class="charts-page">
+        <!-- Dark mode toggle button -->
+        <button class="dark-mode-toggle" id="dark-mode-toggle">Toggle Dark Mode</button>
+
+        <div class="container">
+            <h1>Token Price Tracker</h1>
+
+            <!-- Ethereum Chart -->
+            <div class="token-section">
+                <h2>Token 1: Ethereum (ETH)</h2>
+                <div class="chart-container">
+                    <!-- TradingView Widget -->
+                    <div class="tradingview-widget-container">
+                        <div id="eth-chart"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                        <script type="text/javascript">
+                            new TradingView.widget({
+                                "container_id": "eth-chart",
+                                "width": "100%",
+                                "height": "500",
+                                "symbol": "BINANCE:ETHUSDT",
+                                "interval": "1", // 1-minute interval
+                                "timezone": "Etc/UTC",
+                                "theme": "light",
+                                "style": "1",
+                                "locale": "en",
+                                "toolbar_bg": "#f1f3f6",
+                                "enable_publishing": false,
+                                "hide_side_toolbar": false,
+                                "allow_symbol_change": true,
+                                "details": true,
+                                "studies": ["MA@tv-basicstudies"],
+                                "show_popup_button": true,
+                                "popup_width": "1000",
+                                "popup_height": "650"
+                            });
+                        </script>
+                    </div>
+                </div>
+                <!-- Trade Controls for ETH -->
+                <div class="trade-controls">
+                    <input type="number" id="eth-volume" placeholder="Trade Volume" min="0.001" step="0.001">
+                    <button class="buy-btn" id="eth-buy-btn">Buy</button>
+                    <button class="sell-btn" id="eth-sell-btn">Sell</button>
                 </div>
             </div>
-            <!-- Trade Controls for XRP -->
-            <div class="trade-controls">
-                <input type="number" id="xrp-volume" placeholder="Trade Volume" min="0.001" step="0.001">
-                <button class="buy-btn" id="xrp-buy-btn">Buy</button>
-                <button class="sell-btn" id="xrp-sell-btn">Sell</button>
+
+            <!-- Bitcoin Chart -->
+            <div class="token-section">
+                <h2>Token 2: Bitcoin (BTC)</h2>
+                <div class="chart-container">
+                    <!-- TradingView Widget -->
+                    <div class="tradingview-widget-container">
+                        <div id="btc-chart"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                        <script type="text/javascript">
+                            new TradingView.widget({
+                                "container_id": "btc-chart",
+                                "width": "100%",
+                                "height": "500",
+                                "symbol": "BINANCE:BTCUSDT",
+                                "interval": "1", // 1-minute interval
+                                "timezone": "Etc/UTC",
+                                "theme": "light",
+                                "style": "1",
+                                "locale": "en",
+                                "toolbar_bg": "#f1f3f6",
+                                "enable_publishing": false,
+                                "hide_side_toolbar": false,
+                                "allow_symbol_change": true,
+                                "details": true,
+                                "studies": ["MA@tv-basicstudies"],
+                                "show_popup_button": true,
+                                "popup_width": "1000",
+                                "popup_height": "650"
+                            });
+                        </script>
+                    </div>
+                </div>
+                <!-- Trade Controls for BTC -->
+                <div class="trade-controls">
+                    <input type="number" id="btc-volume" placeholder="Trade Volume" min="0.001" step="0.001">
+                    <button class="buy-btn" id="btc-buy-btn">Buy</button>
+                    <button class="sell-btn" id="btc-sell-btn">Sell</button>
+                </div>
+            </div>
+
+            <!-- XRP Chart -->
+            <div class="token-section">
+                <h2>Token 3: XRP</h2>
+                <div class="chart-container">
+                    <!-- TradingView Widget -->
+                    <div class="tradingview-widget-container">
+                        <div id="xrp-chart"></div>
+                        <script type="text/javascript" src="https://s3.tradingview.com/tv.js"></script>
+                        <script type="text/javascript">
+                            new TradingView.widget({
+                                "container_id": "xrp-chart",
+                                "width": "100%",
+                                "height": "500",
+                                "symbol": "BINANCE:XRPUSDT",
+                                "interval": "1", // 1-minute interval
+                                "timezone": "Etc/UTC",
+                                "theme": "light",
+                                "style": "1",
+                                "locale": "en",
+                                "toolbar_bg": "#f1f3f6",
+                                "enable_publishing": false,
+                                "hide_side_toolbar": false,
+                                "allow_symbol_change": true,
+                                "details": true,
+                                "studies": ["MA@tv-basicstudies"],
+                                "show_popup_button": true,
+                                "popup_width": "1000",
+                                "popup_height": "650"
+                            });
+                        </script>
+                    </div>
+                </div>
+                <!-- Trade Controls for XRP -->
+                <div class="trade-controls">
+                    <input type="number" id="xrp-volume" placeholder="Trade Volume" min="0.001" step="0.001">
+                    <button class="buy-btn" id="xrp-buy-btn">Buy</button>
+                    <button class="sell-btn" id="xrp-sell-btn">Sell</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script>
+        // Show Sign Up or Log In form when button is clicked
+        const homePage = document.querySelector('.home-page');
+        const chartsPage = document.querySelector('.charts-page');
+        const signupBtn = document.getElementById('signup-btn');
+        const loginBtn = document.getElementById('login-btn');
+        const signupForm = document.getElementById('signup-form');
+        const loginForm = document.getElementById('login-form');
+
+        signupBtn.addEventListener('click', () => {
+            signupForm.style.display = 'flex';
+            loginForm.style.display = 'none';
+        });
+
+        loginBtn.addEventListener('click', () => {
+            loginForm.style.display = 'flex';
+            signupForm.style.display = 'none';
+        });
+
+        // Handle Sign Up
+        const signupEmailInput = document.getElementById('signup-email');
+        const signupSubmitBtn = document.getElementById('signup-submit');
+
+        signupSubmitBtn.addEventListener('click', () => {
+            const email = signupEmailInput.value.trim();
+            if (validateEmail(email)) {
+                localStorage.setItem('userEmail', email); // Simulate user registration
+                alert('Sign up successful!');
+                homePage.style.display = 'none';
+                chartsPage.style.display = 'block';
+            } else {
+                alert('Please enter a valid email address.');
+            }
+        });
+
+        // Handle Log In
+        const loginEmailInput = document.getElementById('login-email');
+        const loginSubmitBtn = document.getElementById('login-submit');
+
+        loginSubmitBtn.addEventListener('click', () => {
+            const email = loginEmailInput.value.trim();
+            const storedEmail = localStorage.getItem('userEmail'); // Simulate user login
+            if (validateEmail(email) && email === storedEmail) {
+                alert('Log in successful!');
+                homePage.style.display = 'none';
+                chartsPage.style.display = 'block';
+            } else {
+                alert('Invalid email or user not found.');
+            }
+        });
+
+        // Validate email format
+        function validateEmail(email) {
+            const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return regex.test(email);
+        }
+
         // Dark mode toggle functionality
         const darkModeToggle = document.getElementById('dark-mode-toggle');
         const body = document.body;
